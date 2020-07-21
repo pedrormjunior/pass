@@ -74,6 +74,8 @@
     (define-key map (kbd "o") #'pass-otp-options)
     (define-key map (kbd "RET") #'pass-view)
     (define-key map (kbd "q") #'pass-quit)
+    (define-key map (kbd "c") #'pass-git-commit)
+    (define-key map (kbd "P") #'pass-git-push)
     map)
   "Keymap for `pass-mode'.")
 
@@ -344,6 +346,9 @@ using all fields in the entry."
     (pass--display-keybindings '((pass-kill . "Delete")
                                  (pass-prev-directory . "Previous dir")
                                  (describe-mode . "Help")))
+    (insert "\n")
+    (pass--display-keybindings '((pass-git-commit . "Git commit")
+                                 (pass-git-push . "Git push")))
     (newline)
     (newline)))
 
@@ -655,6 +660,17 @@ This function also binds a couple of handy OTP related key-bindings to
   (interactive)
   (pass--with-closest-entry entry
     (password-store-url entry)))
+
+(defun pass-git-commit ()
+  (interactive)
+  (password-store--run-git
+   "commit"
+   "-u" "--all"
+   "-m" "Edit entries using pass in Emacs"))
+
+(defun pass-git-push ()
+  (interactive)
+  (password-store--run-git "push"))
 
 (defvar pass-view-font-lock-keywords '("^[^\s\n]+:" . 'font-lock-keyword-face)
   "Font lock keywords for ‘pass-view-mode’.")
